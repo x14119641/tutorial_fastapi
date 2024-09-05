@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "tutorial-fastapi"
+version = "0.1.0"
+description = ""
+authors = ["Tutorial FastAPI [Youtube] <daniel.gil.romero24@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["all"], version = "^0.113.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
