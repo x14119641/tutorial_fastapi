@@ -30,7 +30,7 @@ class DatabaseAsync:
             yield conn
         except Exception as e:
             error = f'<Error in Database> {str(e)}'
-            raise error
+            raise e
         finally:
             await conn.close()
             
