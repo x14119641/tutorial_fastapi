@@ -8,6 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = {extras = ["all"], version = "^0.113.0"}
+asyncpg = "^0.29.0"
+asyncio = "^3.4.3"
 
 
 [build-system]
