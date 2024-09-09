@@ -10,7 +10,7 @@ poetry init
 cd tutorial_fastapi
 pipenv install -r requirements.txt
 ```
-## config file with your postgres credentials 
+## Add config file with your postgres credentials 
 You need a config file named as **config.json** like:
 
 ```json
