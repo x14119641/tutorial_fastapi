@@ -9,9 +9,10 @@ poetry init
 ```
 cd tutorial_fastapi
 pipenv install -r requirements.txt
-
+```
 ## config file with your postgres credentials 
 You need a config file named as **config.json** like:
+
 ```json
 {
     "host": "127.0.0.1",
