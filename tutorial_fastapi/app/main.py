@@ -1,45 +1,13 @@
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body
-from pydantic import BaseModel
-from typing import Optional
-from random import randrange
+from .schema import Post, PostCreate
 from .database import DatabaseAsync
-
-HOST = '127.0.0.1'
-USER = 'postgres'
-PWD = 'postgres'
-DB = 'tutorial_fastapi'
-
+from .config import Settings
 
 app = FastAPI()
-db = DatabaseAsync(host=HOST, user=USER, password=PWD, database=DB)
-print(db)
+settings = Settings.read_file()
 
-# mocking db
-global posts 
-posts = [{"bla":"blo", "id":1}, {"bla":"blo", "id":2}]
-
-
-
-
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
-    raiting: Optional[int] = None
-    
-
-
-def find_post(id:int):
-    return next((item for item in posts if item['id'] == id), None)
-
-
-def delete_post_by_id(id:int):
-    initial_len_posts = len(posts)
-    posts[:] = [item for item in posts if item.get('id') != id]
-    if initial_len_posts == len(posts):
-        return False
-    return True
+db = DatabaseAsync(**settings)
 
 
 @app.get("/")
@@ -54,11 +22,12 @@ async def get_posts():
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-async def create_post(post:Post):
-    await db.execute(
+async def create_post(post:PostCreate):
+    rows = await db.execute_and_get_record(
         "INSERT INTO posts (title, content, published) VALUES ($1, $2, $3)", 
         (post.title, post.content, str(post.published)))
-    return {"data": post}
+    #rows = await db.fetchone("SELECT * FROM posts ORDER BY id DESC LIMIT 1")
+    return {"data": rows}
 
 
 
@@ -78,19 +47,17 @@ async def get_post(id:int, response:Response):
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(id:int):
-    post_exist = await db.fetchone("SELECT * FROM posts WHERE id=($1)", (id,))
-    await db.execute("DELETE FROM posts WHERE  id=($1)", (id,))
-    if post_exist is None:
+    row = await db.execute_and_get_record("DELETE FROM posts WHERE  id=($1)", (id,))
+    if row is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ID not found ')
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.put("/posts/{id}", status_code=status.HTTP_202_ACCEPTED)
-async def update_post(id:int, post:Post):
-    post_to_update = await db.fetchone("SELECT * FROM posts WHERE id=($1)", (id,))
-    await db.execute(
+async def update_post(id:int, post:PostCreate):
+    row = await db.execute_and_get_record(
         "UPDATE posts SET title=($1), content=($2), published=($3) WHERE id=($4)", 
         (post.title, post.content, str(post.published),id,))
-    if not post_to_update:
+    if row is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ID not found ')
-    return {"data": post}
+    return {"data": row}
