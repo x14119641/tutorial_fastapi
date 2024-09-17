@@ -16,3 +16,6 @@ class Settings(BaseSettings):
             data = json.loads(json_file.read())
         return data
     
+class Secrets(BaseSettings):
+    SECRET_KEY:str
+    ACCESS_TOKEN_EXPIRE_MINUTES:int
