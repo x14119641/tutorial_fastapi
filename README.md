@@ -21,5 +21,31 @@ You need a config file named as **config.json** like:
     "database": "tutorial_fastapi"
 }
 ```
+
+## Add secrets file 
+You need a config file named as **secrets.json** like:
+
+```json
+{
+    "SECRET_KEY" : "my_secret",
+    "ALGORITHM": "HS256",
+    "ACCESS_TOKEN_EXPIRE_MINUTES" : 30
+}
+```
+And you can use the following command to create a secret key:
+```
+openssl rand -hex 32
+```
+
+# Don't forget to start postgres!
+```
+sudo systemctl start postgresql
+```
+
+# Start application in dev mode
+```
+fastapi dev tutorial_fastapi/app/main.py  
+```
+
 ## References
 https://www.youtube.com/watch?v=0sOvCWFmrtA
