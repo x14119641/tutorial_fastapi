@@ -34,8 +34,10 @@ class UserCreate(UserBase):
     password:str
 
 
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
     id:int
+    username: str
+    email:EmailStr
     created_at:datetime
     
 

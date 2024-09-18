@@ -111,6 +111,21 @@ async def read_own_items(
 ):
     return [{"item_id": "Foo", "owner": current_user.username}]
 
+@app.get("/users/me/items/")
+async def read_own_items(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+):
+    return [{"item_id": "Foo", "owner": current_user.username}]
+
+@app.get("/users/{id}", response_model=UserResponse)
+async def get_user_by_id(id:int, 
+                         dependencies:Annotated[UserResponse, Depends(get_current_active_user)]):
+    # Find user
+    rows = await db.fetchone("SELECT * FROM users WHERE id=($1) LIMIT 1", (id,))
+    if not rows:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ID not found ')
+    return rows
+
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = await authenticate_user(form_data.username, form_data.password)
@@ -163,7 +178,7 @@ async def get_post(id:int, response:Response):
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(id:int):
-    row = await db.execute_and_get_record("DELETE FROM posts WHERE  id=($1)", (id,))
+    row = await db.execute_and_get_record("DELETE FROM posts WHERE id=($1) LIMIT 1", (id,))
     if row is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ID not found ')
     return Response(status_code=status.HTTP_204_NO_CONTENT)
