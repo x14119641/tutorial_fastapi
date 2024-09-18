@@ -4,28 +4,28 @@ from ..dependencies import db, oauth2_scheme, password_hash
 from .auth import get_current_active_user
 from typing import Annotated
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["Users"])
 
-@router.get("/users/hello")
-async def read_hello(id:int):
+@router.get("/hello", response_model=UserResponse)
+async def read_hello():
     rows = await db.fetchone("SELECT * FROM users WHERE id=3 LIMIT 1")
     if not rows:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ID not found ')
     return rows
 
 
-@router.get("/users/me")
+@router.get("/me")
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],):
     return current_user
 
-@router.get("/users/me/items/")
+@router.get("/me/items/")
 async def read_own_items(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):
     return [{"item_id": "Foo", "owner": current_user.username}]
 
-@router.get("/users/{id}", response_model=UserResponse)
+@router.get("/{id}", response_model=UserResponse)
 async def get_user_by_id(id:int, 
                          dependencies:Annotated[UserResponse, Depends(get_current_active_user)]):
     # Find user
@@ -34,7 +34,7 @@ async def get_user_by_id(id:int,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ID not found ')
     return rows
 
-@router.post("/users", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
 async def create_user(user:UserCreate):
     # Check if email exists
     email_exists = await db.fetchone("SELECT email FROM users WHERE email=($1)", (user.email,))
