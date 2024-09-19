@@ -34,7 +34,7 @@ class UserCreate(UserBase):
     password:str
 
 
-class UserLogin(BaseModel):
+class UserLogin(UserBase):
     username: str | EmailStr
     password:str
     
