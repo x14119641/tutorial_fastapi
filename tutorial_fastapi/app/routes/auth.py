@@ -12,9 +12,9 @@ router = APIRouter(tags=["Authentcation"])
 
 
 async def get_user(username: str):
-    data = await db.fetchone("SELECT * FROM users WHERE username = ($1)", (username,))
+    data = await db.fetchone("SELECT * FROM users WHERE username = ($1) OR email = ($2)", (username, username))
     if data:
-        return UserCreate(**data)
+        return UserLogin(**data)
 
 
 def verify_password(plain_password, hashed_password):
@@ -55,6 +55,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     )
     try:
         payload = jwt.decode(token, secrets["SECRET_KEY"], algorithms=[secrets["ALGORITHM"],])
+        # username can be the 'username' or the email
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
