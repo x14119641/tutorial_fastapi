@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from ..schema import (Post, PostCreate, User, UserCreate, UserResponse,
+from ..schema import (Post, PostCreate, User, UserCreate, UserResponse, UserLogin,
                      Token, TokenData)
 from ..dependencies import db, oauth2_scheme, password_hash, secrets
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -8,7 +8,7 @@ from jwt.exceptions import InvalidTokenError
 from datetime import datetime, timedelta, timezone
 import jwt 
 
-router = APIRouter()
+router = APIRouter(tags=["Authentcation"])
 
 
 async def get_user(username: str):
@@ -82,7 +82,7 @@ async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
 
 
 @router.post("/token")
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+async def token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = await authenticate_user(form_data.username, form_data.password)
 
     if not user:
@@ -97,8 +97,23 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
     )
     return Token(access_token=access_token, token_type="bearer")
 
+"""
+@router.post("/login")
+async def login(form_data:UserLogin) -> Token:
+    user = await authenticate_user(form_data.username, form_data.password)
 
-
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=secrets["ACCESS_TOKEN_EXPIRE_MINUTES"])
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return Token(access_token=access_token, token_type="bearer")
+"""
 
 
 

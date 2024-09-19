@@ -34,6 +34,12 @@ class UserCreate(UserBase):
     password:str
 
 
+class UserLogin(BaseModel):
+    username: str
+    email:EmailStr | None = None
+    password:str
+    
+    
 class UserResponse(BaseModel):
     id:int
     username: str
