@@ -82,14 +82,14 @@ async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
 
 
 
-@router.post("/token")
-async def token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+@router.post("/login")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = await authenticate_user(form_data.username, form_data.password)
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Incorrect credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=secrets["ACCESS_TOKEN_EXPIRE_MINUTES"])
@@ -99,8 +99,8 @@ async def token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
     return Token(access_token=access_token, token_type="bearer")
 
 """
-@router.post("/login")
-async def login(form_data:UserLogin) -> Token:
+@router.post("/token")
+async def token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = await authenticate_user(form_data.username, form_data.password)
 
     if not user:

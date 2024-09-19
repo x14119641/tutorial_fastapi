@@ -4,7 +4,7 @@ from pwdlib import PasswordHash
 from .database import DatabaseAsync
 from .config import Settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 password_hash = PasswordHash.recommended()
 
 settings = Settings.read_file()
