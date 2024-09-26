@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from ..schema import (User, UserCreate, UserResponse,
-                      Post, PostCreate)
+                      Post, PostCreate, PostOut)
 from ..dependencies import db
 from typing import List, Annotated, Optional
 from .auth import get_current_active_user
@@ -8,11 +8,24 @@ from .auth import get_current_active_user
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
-@router.get("/", response_model=List[Post,])
+@router.get("/", response_model=List[PostOut,])
 async def get_posts(dependencies:Annotated[UserResponse, Depends(get_current_active_user)],
                     limit:int = 10, skip:int = 0, q:Optional[str] = ""):
     rows = await db.fetchall("SELECT * FROM posts WHERE content LIKE ($1) LIMIT ($2) OFFSET ($3)",(f"%{q}%",limit,skip,))
-    return rows
+    
+    result = await db.fetchall(
+        """
+            SELECT  p.id, p.title, p.content, p.created_at, COUNT(v.post_id) as votes
+            FROM votes v
+            LEFT JOIN posts p
+            ON v.post_id = p.id
+            WHERE content LIKE ($1)
+            GROUP BY p.id
+            LIMIT ($2)
+            OFFSET ($3)
+        """, (f"%{q}%",limit,skip,)
+    )
+    return result
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=Post)
@@ -32,11 +45,11 @@ async def get_last_post():
     return rows
 
 
-@router.get("/{id}", response_model=Post)
+@router.get("/{id}", response_model=PostOut)
 async def get_post(id:int, response:Response):
     # Find post
-    print(limit)
-    rows = await db.fetchone("SELECT * FROM posts WHERE id=($1)", (id,))
+    rows = await db.fetchone(
+        "SELECT p.*, COUNT(v.post_id) as votes FROM votes v LEFT JOIN posts p ON v.post_id = p.id WHERE id=($1) GROUP BY p.id", (id,))
     if not rows:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ID not found ')
     return rows
