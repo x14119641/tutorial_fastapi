@@ -8,6 +8,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 password_hash = PasswordHash.recommended()
 
 settings = Settings.read_file()
-secrets = Settings.read_file('tutorial_fastapi/app/secrets.json')
+secrets = Settings.read_file('backend/app/secrets.json')
 
 db = DatabaseAsync(**settings)
