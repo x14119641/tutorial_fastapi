@@ -4,6 +4,9 @@ WORKDIR /tutorial_fastapi
 
 COPY . . 
 
+
+RUN export LDFLAGS="-L/usr/local/opt/openssl/lib"
+
 RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
 EXPOSE 8000

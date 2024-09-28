@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     user:str
     pasword:str
     database:str
+    port:str
     #model_config = SettingsConfigDict(env_file="config.env")
     
     @staticmethod
