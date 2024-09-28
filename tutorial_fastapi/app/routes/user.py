@@ -14,10 +14,11 @@ async def read_hello():
     return rows
 
 
-@router.get("/me")
+@router.get("/me", response_model=UserResponse)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],):
-    return current_user
+    rows = await db.fetchone("SELECT * FROM users WHERE id=($1) LIMIT 1", (current_user.id,))
+    return rows
 
 @router.get("/me/items/")
 async def read_own_items(
