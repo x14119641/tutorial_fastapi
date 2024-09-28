@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS users (
+CREATE DATABASE IF NOT EXISTS tutorial_fastapi;
+
+CREATE TABLE IF NOT EXISTS tutorial_fastapi.users (
     id SERIAL PRIMARY KEY,
     username VARCHAR NOT NULL UNIQUE,
     email VARCHAR NOT NULL UNIQUE,
@@ -7,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 
-CREATE TABLE IF NOT EXISTS posts (
+CREATE TABLE IF NOT EXISTS tutorial_fastapi.posts (
     id SERIAL PRIMARY KEY,
     user_id INT,
     title VARCHAR NOT NULL,
@@ -18,7 +20,7 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 
 
-CREATE TABLE IF NOT EXISTS votes (
+CREATE TABLE IF NOT EXISTS tutorial_fastapi.votes (
     post_id INT NOT NULL,
     user_id INT NOT NULL,
     PRIMARY KEY (post_id, user_id),
