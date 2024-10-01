@@ -1,7 +1,11 @@
 <template>
-  <div>
-    <p>The message : {{ msg }}</p>
-  </div>
+    <h2 class="text-2xl font-bold mb-6">{{ title }}</h2>
+
+    <div class="bg-blue-500 p-4 text-white rounded">
+        <h1 class="text-2xl font-bold">Hello Tailwind CSS!</h1>
+        <p>This is a Vue component styled with Tailwind CSS.</p>
+        <p> Message: {{ msg }}</p>
+    </div>
 </template>
 
 <script>
@@ -11,6 +15,7 @@ export default {
     name: 'PingComponent',
     data() {
         return {
+            title: 'My Title',
             msg: ''
         }
     },
