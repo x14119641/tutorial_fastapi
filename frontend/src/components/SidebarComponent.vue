@@ -28,17 +28,20 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { useSidebarStore } from '@/store/sidebarStore';
+import { useDarkModeStore } from '@/store/darkModeStore';
 
 export default {
-  computed: {
-    ...mapGetters(['darkMode', 'sidebarOpen']), // Access darkMode and sidebarOpen via Vuex getters
+  setup() {
+    const sidebarStore = useSidebarStore();
+    const darkModeStore = useDarkModeStore();
+
+    return {
+      sidebarOpen: sidebarStore.sidebarOpen,
+      darkMode: darkModeStore.darkMode,
+      toggleSidebar: sidebarStore.toggleSidebar,
+    };
   },
-  methods: {
-    toggleSidebar() {
-      this.$store.commit('toggleSidebar'); // Commit the mutation to toggle sidebar
-    }
-  }
 };
 </script>
 

@@ -1,45 +1,41 @@
 <template>
     <div>
-        <h1>User Info</h1>
-        <p v-if="user">{{ user }}</p>
+      <h1>User Info</h1>
+      <p v-if="user">{{ user }}</p>
     </div>
-</template>
-
-<script>
-import axios from 'axios';
-import { mapGetters } from 'vuex';
-
-export default {
+  </template>
+  
+  <script>
+  import axios from 'axios';
+  import { useTokenStore } from '@/store/tokenStore';
+  
+  export default {
     name: 'WhoamiComponent',
     data() {
-        return {
-            user: null,
-        };
-    },
-    computed: {
-        ...mapGetters(['token']), // Use the getter directly
+      return {
+        user: null,
+      };
     },
     created() {
-        console.log("Token in WhoamiComponent:", this.token); // Log the token
-
-        if (this.token) {
-            axios({
-                url: '/users/whoami',
-                method: 'GET',
-                headers: {
-                    Authorization: `${this.token}`,
-                },
-            })
-                .then(response => {
-                    this.user = response.data; // Handle user data
-                })
-                .catch(error => {
-                    console.error("Error fetching user data:", error.response ? error.response.data : error);
-                });
-        } else {
-            this.$router.push('/login'); // Redirect to login if no token
-        }
+      const tokenStore = useTokenStore();
+      if (tokenStore.getToken) {
+        axios({
+          url: '/users/whoami',
+          method: 'GET',
+          headers: {
+            Authorization: tokenStore.getToken,
+          },
+        })
+          .then(response => {
+            this.user = response.data;
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      } else {
+        this.$router.push('/login');
+      }
     },
-
-};
-</script>
+  };
+  </script>
+  

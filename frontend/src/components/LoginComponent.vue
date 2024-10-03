@@ -26,51 +26,42 @@
 
 <script>
 import axios from 'axios';
-import { mapGetters } from 'vuex';
+import { useTokenStore } from '@/store/tokenStore';
 
 export default {
   name: 'LoginComponent',
-  computed: {
-    ...mapGetters(['darkMode']), // Access darkMode via Vuex getter
-  },
   data() {
     return {
       title: 'Login',
-      usernameOrEmail: '', // Single data property for username or email
+      usernameOrEmail: '',
       password: '',
     };
   },
   methods: {
     handleSubmit() {
-    const params = new FormData();
-    params.append('username', this.usernameOrEmail);
-    params.append('password', this.password);
-    
-    axios({
+      const params = new FormData();
+      params.append('username', this.usernameOrEmail);
+      params.append('password', this.password);
+      
+      const tokenStore = useTokenStore();
+
+      axios({
         url: 'login',
         method: 'POST',
         data: params,
         headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-    .then(response => {
-        const access_token = response.data.access_token; // Adjust according to your API response
-        this.$store.commit('setToken', `Bearer ${access_token}`); // Ensure you are using the namespaced commit
-        console.log('Token set in Vuex:', this.$store.getters['token']); // Check if the token is set correctly
-        this.$router.push('/whoami'); // Redirect to the whoami page
-    })
-    .catch(error => {
-        console.error(error);
-    });
-}
-
-  }
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(response => {
+          const access_token = response.data.access_token;
+          tokenStore.setToken(`Bearer ${access_token}`);
+          this.$router.push('/whoami');
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+  },
 };
 </script>
-
-<style scoped>
-.flex-grow {
-  flex-grow: 1;
-}
-</style>

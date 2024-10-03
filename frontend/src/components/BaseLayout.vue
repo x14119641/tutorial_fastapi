@@ -12,7 +12,7 @@
 
     <div class="flex flex-1">
       <SidebarComponent />
-      <RouterView></RouterView>
+      <RouterView />
     </div>
 
     <footer :class="darkMode ? 'bg-gray-800 text-white' : 'bg-gray-300 text-black'" class="p-4 text-center">
@@ -22,20 +22,23 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { useDarkModeStore } from '@/store/darkModeStore'; // Adjust the import path as necessary
+import { useSidebarStore } from '@/store/sidebarStore'; // Adjust the import path as necessary
 import SidebarComponent from './SidebarComponent.vue';
 
 export default {
   components: {
     SidebarComponent,
   },
-  computed: {
-    ...mapGetters(['darkMode', 'sidebarOpen']), // Access darkMode and sidebarOpen from Vuex
+  setup() {
+    const darkModeStore = useDarkModeStore();
+    const sidebarStore = useSidebarStore();
+
+    return {
+      darkMode: darkModeStore.darkMode,
+      toggleDarkMode: darkModeStore.toggleDarkMode,
+      sidebarOpen: sidebarStore.sidebarOpen, // This can be used if needed
+    };
   },
-  methods: {
-    toggleDarkMode() {
-      this.$store.commit('toggleDarkMode'); // Commit the mutation to toggle dark mode
-    }
-  }
 };
 </script>
