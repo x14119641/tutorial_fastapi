@@ -1,6 +1,5 @@
 <template>
   <div :class="darkMode ? 'bg-gray-900 text-white' : 'bg-gray-200 text-black'" class="min-h-screen flex flex-col">
-    <!-- Header -->
     <header class="p-4 flex items-center justify-between" :class="darkMode ? 'bg-gray-800' : 'bg-gray-300'">
       <div class="flex items-center">
         <h1 class="text-xl">My App</h1>
@@ -13,7 +12,7 @@
 
     <div class="flex flex-1">
       <SidebarComponent />
-      <LoginComponent />
+      <RouterView></RouterView>
     </div>
 
     <footer :class="darkMode ? 'bg-gray-800 text-white' : 'bg-gray-300 text-black'" class="p-4 text-center">
@@ -25,15 +24,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import SidebarComponent from './SidebarComponent.vue';
-import LoginComponent from './LoginComponent.vue';
 
 export default {
   components: {
     SidebarComponent,
-    LoginComponent,
   },
   computed: {
-    ...mapGetters(['darkMode']),
+    ...mapGetters(['darkMode', 'sidebarOpen']), // Access darkMode and sidebarOpen from Vuex
   },
   methods: {
     toggleDarkMode() {

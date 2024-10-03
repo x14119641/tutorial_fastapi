@@ -1,21 +1,13 @@
-// store/index.js
 import { createStore } from 'vuex';
+import darkMode from './modules/darkMode';
+import sideBar from './modules/sideBar';
+import token from './modules/token';
 
 export default createStore({
-  state: {
-    darkMode: false,
-    sidebarOpen: true, // Add sidebar state if needed
+  modules: {
+    darkMode,
+    sideBar,
+    token,
   },
-  mutations: {
-    toggleDarkMode(state) {
-      state.darkMode = !state.darkMode;
-    },
-    toggleSidebar(state) {
-      state.sidebarOpen = !state.sidebarOpen;
-    },
-  },
-  getters: {
-    darkMode: (state) => state.darkMode,
-    sidebarOpen: (state) => state.sidebarOpen,
-  },
+  strict: true, // Enforce best practices in development
 });
