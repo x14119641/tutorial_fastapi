@@ -3,11 +3,13 @@ import HomeView from '../views/HomeView.vue';
 import LoginComponent from '@/components/LoginComponent.vue';
 import WhoamiView from '@/views/WhoamiView.vue';
 import { useTokenStore } from '@/store/tokenStore';
+import TokenView from '@/views/TokenView.vue';
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
   { path: '/login', name: 'login', component: LoginComponent },
   { path: '/whoami', name: 'whoami', component: WhoamiView, meta: { requiresAuth: true } },
+  { path: '/token', name: 'token', component: TokenView, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
